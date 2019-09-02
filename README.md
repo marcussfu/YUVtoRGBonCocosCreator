@@ -21,8 +21,8 @@ Effect其實就是Shader，以Opengl語言來開發。
 
 這邊基本的做法就是，將從Websocket取得的直播影像訊息buffer，拆解成yuv三個Uint8Array，然後透過Webgl轉換成三張GLTexture，再送入Effect Shader中換算成rgb值呈現出來。
 
-- 1. 拆解影像訊息成yuv
+- 1 拆解影像訊息成yuv
 ```javascript
-
+123
 ```
 
