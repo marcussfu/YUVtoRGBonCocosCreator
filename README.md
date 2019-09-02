@@ -66,7 +66,9 @@ setGLTexture(index, texture, width, height, data) {
 ```
 3. Effect取得yuv GLTexture，轉換成rgb後呈現
 
-這邊要說明一下effect裡的程式結構，下面的techniques和passes，是shader的呈現方式，vert和frag就是接下來會用到的頂點和碎片運算，而properties是預設會有的參數，設定好後可以直接從編輯器上設定。
+這邊要說明一下effect裡的程式結構，下面的techniques和passes，是shader的呈現方式。
+vert和frag就是接下來會用到的頂點和碎片運算，理解的想法應該是先在vert(vs)取得頂點資訊，然後傳入frag(fs)針對各頂點運算相關rgb值，最後呈現出每個碎片的顏色。
+而properties是預設會有的參數，設定好後可以直接從編輯器上設定。
 ```
 %{
   techniques: [
@@ -91,5 +93,35 @@ setGLTexture(index, texture, width, height, data) {
 %}
 
 ```
+接著是vs，頂點運算，這裡理解成Effect Shader會取得這個Sprite的位置和頂點矩陣，這邊直接用原本的範例程式來取得Sprite的頂點資訊。
+uniform: 代表從外部傳入的參數
+attribute: 應該代表內部取得的參數(a_position位置，a_uv0貼圖uv位置)
+varying: 冠有這個前綴字的參數代表等下要傳入fs運算
 
+```
+%% vs {
+
+precision highp float;
+
+uniform mat4 cc_matViewProj;
+attribute vec3 a_position;
+
+#if USE_TEXTURE
+  attribute mediump vec2 a_uv0;
+  varying mediump vec2 v_uv0;
+#endif
+
+void main () {
+  mat4 mvp;
+  mvp = cc_matViewProj;
+
+  #if USE_TEXTURE
+    v_uv0 = a_uv0;
+  #endif
+
+  gl_Position = mvp * vec4(a_position, 1);
+}
+
+}
+```
 
