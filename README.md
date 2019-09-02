@@ -142,12 +142,12 @@ precision highp float;
 
 void main () {
   vec4 c = vec4((texture2D(ySampler, v_uv0).r - 16./255.) * 1.164);
-	vec4 U = vec4(texture2D(uSampler, v_uv0).r - 128./255.);
-	vec4 V = vec4(texture2D(vSampler, v_uv0).r - 128./255.);
-	c += V * vec4(1.596, -0.813, 0, 0);
-	c += U * vec4(0, -0.392, 2.017, 0);
-	c.a = 1.0;
-	gl_FragColor = c;
+  vec4 U = vec4(texture2D(uSampler, v_uv0).r - 128./255.);
+  vec4 V = vec4(texture2D(vSampler, v_uv0).r - 128./255.);
+  c += V * vec4(1.596, -0.813, 0, 0);
+  c += U * vec4(0, -0.392, 2.017, 0);
+  c.a = 1.0;
+  gl_FragColor = c;
 }
 
 }
