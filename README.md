@@ -38,7 +38,7 @@ this.uData = this.player.video.instance.heapU8.subarray(
 );
 ```
 
-2. 透過Webgl轉換成GLTexture
+2. 透過Webgl轉換成GLTexture，並傳送每次更新後的yuv GLTexture進Effect Shader裡
 ```javascript
 this.yTex = this.gl.createTexture();
 this.uTex = this.gl.createTexture();
@@ -52,6 +52,7 @@ this.setGLTexture(3, this.vTex, this.renderWidth/2, this.renderHeight/2,this.vDa
 .
 .
 .
+// 在setGLTexture中，就已經activeTexture，將已經gl.createTexture的GLTexture轉送到該sprite的material的effect裡(如果有設定的話)
 setGLTexture(index, texture, width, height, data) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0+index);
@@ -62,6 +63,33 @@ setGLTexture(index, texture, width, height, data) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, width, height, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
 },
+```
+3. Effect取得yuv GLTexture，轉換成rgb後呈現
+
+這邊要說明一下effect裡的程式結構，下面的techniques和passes，是shader的呈現方式，vert和frag就是接下來會用到的頂點和碎片運算，而properties是預設會有的參數，設定好後可以直接從編輯器上設定。
+```
+%{
+  techniques: [
+    {
+      passes: [
+        {
+          vert: vs
+          frag: fs
+          cullMode: none
+          blend: true
+        }
+      ]
+      layer: 0
+    }
+  ]
+  properties: {
+    texture: {
+      type: sampler2D
+      value: null
+    }
+  }
+%}
+
 ```
 
 
