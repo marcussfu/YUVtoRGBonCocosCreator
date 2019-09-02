@@ -94,9 +94,9 @@ vert和frag就是接下來會用到的頂點和碎片運算，理解的想法應
 
 ```
 接著是vs，頂點運算，這裡理解成Effect Shader會取得這個Sprite的位置和頂點矩陣，這邊直接用原本的範例程式來取得Sprite的頂點資訊。
-uniform: 代表從外部傳入的參數
-attribute: 應該代表內部取得的參數(a_position位置，a_uv0貼圖uv位置)
-varying: 冠有這個前綴字的參數代表等下要傳入fs運算
+- uniform: 代表從外部傳入的參數
+- attribute: 應該代表內部取得的參數(a_position位置，a_uv0貼圖uv位置)
+- varying: 冠有這個前綴字的參數代表等下要傳入fs運算
 
 ```
 %% vs {
