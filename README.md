@@ -124,4 +124,37 @@ void main () {
 
 }
 ```
+從vs取得頂點資訊，傳入fs運算，這裡還有從外部傳入的三張yuv的貼圖，接著針對yuv和頂點資訊，代入yuv換算成rgb的公式，算出每個碎片的rgb色值。
+- uniform sampler2D ySampler，uSampler，vSampler: 就是在Webgl算好的yuv三張貼圖，要指定index(gl.TEXTURE0+index)傳入
+- varying mediump vec2 v_uv0: 從vs傳來的頂點資訊
+```
+%% fs {
+
+precision highp float;
+
+#if USE_TEXTURE
+  uniform sampler2D texture;
+  uniform sampler2D ySampler;
+  uniform sampler2D uSampler;
+  uniform sampler2D vSampler;
+  varying mediump vec2 v_uv0;
+#endif
+
+void main () {
+  vec4 c = vec4((texture2D(ySampler, v_uv0).r - 16./255.) * 1.164);
+	vec4 U = vec4(texture2D(uSampler, v_uv0).r - 128./255.);
+	vec4 V = vec4(texture2D(vSampler, v_uv0).r - 128./255.);
+	c += V * vec4(1.596, -0.813, 0, 0);
+	c += U * vec4(0, -0.392, 2.017, 0);
+	c.a = 1.0;
+	gl_FragColor = c;
+}
+
+}
+```
+
+
+
+
+
 
