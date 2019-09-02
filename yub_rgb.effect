@@ -1,0 +1,87 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.  
+
+// Note: Current format version is experiment, the format may be changed.
+// The future format may not be compatible, you may need to update the script manually.
+
+// 注意：当前版本的格式是实验性的，之后还会进行修改。
+// 后续版本的格式不保证兼容当前格式，可能需要手动升级到最新版本。，
+%{
+  techniques: [
+    {
+      passes: [
+        {
+          vert: vs
+          frag: fs
+          cullMode: none
+          blend: true
+        }
+      ]
+      layer: 0
+    }
+  ]
+  properties: {
+    texture: {
+      type: sampler2D
+      value: null
+    }
+  }
+%}
+
+%% vs {
+
+precision highp float;
+
+uniform mat4 cc_matViewProj;
+
+#if _USE_MODEL
+  uniform mat4 cc_matWorld;
+#endif
+
+attribute vec3 a_position;
+
+#if USE_TEXTURE
+  attribute mediump vec2 a_uv0;
+  varying mediump vec2 v_uv0;
+#endif
+
+void main () {
+  mat4 mvp;
+  
+  #if _USE_MODEL
+    mvp = cc_matViewProj * cc_matWorld;
+  #else
+    mvp = cc_matViewProj;
+  #endif
+
+  #if USE_TEXTURE
+    v_uv0 = a_uv0;
+  #endif
+
+  gl_Position = mvp * vec4(a_position, 1);
+}
+
+}
+
+%% fs {
+
+precision highp float;
+
+#if USE_TEXTURE
+  uniform sampler2D texture;
+  uniform sampler2D ySampler;
+  uniform sampler2D uSampler;
+  uniform sampler2D vSampler;
+  varying mediump vec2 v_uv0;
+#endif
+
+void main () {
+  vec4 c = vec4((texture2D(ySampler, v_uv0).r - 16./255.) * 1.164);
+	vec4 U = vec4(texture2D(uSampler, v_uv0).r - 128./255.);
+	vec4 V = vec4(texture2D(vSampler, v_uv0).r - 128./255.);
+	c += V * vec4(1.596, -0.813, 0, 0);
+	c += U * vec4(0, -0.392, 2.017, 0);
+	c.a = 1.0;
+	gl_FragColor = c;
+}
+
+}
